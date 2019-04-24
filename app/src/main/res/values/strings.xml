@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Saver</string>
+    <string name="text_write">Escriba aqui</string>
+    <string name="text_save">Guardar</string>
+    <string name="text_write_internal">Guardar Interno</string>
+    <string name="text_read_internal">Leer externo</string>
+    <string name="text_write_external">Guardar Externo</string>
+</resources>
