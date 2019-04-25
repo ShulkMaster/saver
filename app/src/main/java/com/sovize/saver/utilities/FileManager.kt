@@ -9,13 +9,15 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
+import java.io.FileWriter
+import java.io.IOException
 
 class FileManager {
 
     private val tag = "FileManager"
 
     /* Checks if external storage is available for read and write */
-    private fun isExternalStorageWritable(): Boolean = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+    fun isExternalStorageWritable(): Boolean = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
 
     /* Checks if external storage is available to at least read */
@@ -26,11 +28,15 @@ class FileManager {
 
     fun makeTxtFIle(filename: String, ctx: Context): File {
         // Get the directory for the user's public download directory.
-        val file = File(
-            Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS), filename)
+        val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename)
         if (isExternalStorageWritable()) {
-            if (file.mkdirs()) {
+            if (!file.exists()) {
+                try {
+                    file.mkdirs()
+                    file.createNewFile()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
                 Log.i(tag, "Directory didn't exist, created just now ")
             }
             Log.d(tag, "this is the path: ${file.absolutePath}")
@@ -42,15 +48,14 @@ class FileManager {
         return file
     }
 
-    fun writeTxtFIle(file: File, content: String){
-        if(isExternalStorageWritable()) {
-            FileOutputStream(file).use {
-                it.write(content.toByteArray())
-            }
+    fun writeFile(file: File, content: String){
+        if(isExternalStorageWritable()){
+            FileWriter(file).write(content)
+            FileOutputStream(file).write(content.toByteArray())
         }
     }
 
     fun getUri(path: String, context: Context): Uri {
-        return FileProvider.getUriForFile(context, "com.sovize.sovizeapp.fileprovider", File(path))
+        return FileProvider.getUriForFile(context, "com.sovize.saver.fileprovider", File(path))
     }
 }

@@ -2,15 +2,11 @@ package com.sovize.saver
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.sovize.saver.utilities.PermissionRequester
 import com.sovize.saver.utilities.FileManager
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 
             // TODO (10) Al usar use obtenemos el fileInput que devuelve FileOutputStream
             // TODO (11) use cierra el FileOutputStream y maneja la exception a nivel de bloque
-
             openFileOutput(filename, Context.MODE_PRIVATE).use {
                 it.write(fileContent.toByteArray())
             }
@@ -83,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         if (permission.hasExtStoragePermission(this)) {
             val file = fileKeeper.makeTxtFIle("saver.txt", applicationContext)
             Log.d(tag, "this is the path: ${file.absolutePath}")
-            fileKeeper.writeTxtFIle(file, tv_data.text.toString())
+            fileKeeper.writeFile(file, tv_data.text.toString())
         } else {
             permission.askExtStoragePermission(this)
         }
