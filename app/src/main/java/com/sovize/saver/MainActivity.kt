@@ -2,15 +2,23 @@ package com.sovize.saver
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.sovize.saver.utilities.PermissionRequester
+import com.sovize.saver.utilities.FileManager
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
     private val key = "com.sovize.saver.PREFERENCE_FILE"
     private val keymail = "mail"
+    private val tag = "MainActivity"
     private val permission = PermissionRequester()
+    private val fileKeeper = FileManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,14 +58,14 @@ class MainActivity : AppCompatActivity() {
             // TODO (10) Al usar use obtenemos el fileInput que devuelve FileOutputStream
             // TODO (11) use cierra el FileOutputStream y maneja la exception a nivel de bloque
 
-            openFileOutput(filename,Context.MODE_PRIVATE).use {
+            openFileOutput(filename, Context.MODE_PRIVATE).use {
                 it.write(fileContent.toByteArray())
             }
 
         }
 
 
-        bt_read_internal.setOnClickListener{
+        bt_read_internal.setOnClickListener {
             // TODO (12) Abrir un archivo existente
             val filename = "email.txt"
             openFileInput(filename).use {
@@ -66,11 +74,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        bt_write_external.setOnClickListener{
-
+        bt_write_external.setOnClickListener {
+            saveExt()
         }
     }
 
-
-
+    private fun saveExt() {
+        if (permission.hasExtStoragePermission(this)) {
+            val file = fileKeeper.makeTxtFIle("saver.txt", applicationContext)
+            Log.d(tag, "this is the path: ${file.absolutePath}")
+            fileKeeper.writeTxtFIle(file, tv_data.text.toString())
+        } else {
+            permission.askExtStoragePermission(this)
+        }
+    }
 }
